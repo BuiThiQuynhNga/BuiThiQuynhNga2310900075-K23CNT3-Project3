@@ -25,5 +25,8 @@ public class BtqnAuthorService {
     public  void deleteBtqnAuthorById(Long btqnId){
         btqnAuthorRepository.deleteById(btqnId);
     }
+    public List<btqnAuthor> findBtqnAuthorById(List<Long> btqnIds){
+        return btqnAuthorRepository.findAllById(btqnIds);
+    }
 }
 
