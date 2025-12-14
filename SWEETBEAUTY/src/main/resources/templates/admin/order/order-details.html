@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Đơn Hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-4">
+    <h2>Chi Tiết Đơn Hàng #<span th:text="${order.id}">1</span></h2>
+    <div class="mb-3">
+        <strong>Người Mua:</strong> <span th:text="${order.user.fullName}">Nguyen Van A</span><br>
+        <strong>Email:</strong> <span th:text="${order.user.email}">abc@gmail.com</span><br>
+        <strong>Điện Thoại:</strong> <span th:text="${order.user.phone}">0123456789</span><br>
+        <strong>Ngày Tạo:</strong> <span th:text="${#dates.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 12:00</span><br>
+        <strong>Trạng Thái:</strong> <span th:text="${order.status}">Đang xử lý</span>
+    </div>
+
+    <h4>Sản Phẩm</h4>
+    <table class="table table-bordered mt-2">
+        <thead>
+        <tr>
+            <th>Sản Phẩm</th>
+            <th>Giá</th>
+            <th>Số Lượng</th>
+            <th>Thành Tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.items}">
+            <td th:text="${item.product.name}">Sản phẩm A</td>
+            <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA')} + ' VND'">50,000 VND</td>
+            <td th:text="${item.quantity}">2</td>
+            <td th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA')} + ' VND'">100,000 VND</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <th colspan="3">Tổng Tiền</th>
+            <th th:text="${#numbers.formatDecimal(order.total, 0, 'COMMA')} + ' VND'">100,000 VND</th>
+        </tr>
+        </tfoot>
+    </table>
+
+    <a href="/admin/orders" class="btn btn-secondary mt-3">Quay Lại</a>
+</div>
+
+</body>
+</html>
