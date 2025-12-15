@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- ChartJS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background: linear-gradient(180deg, #7b5cf3, #c084fc);
+            padding-top: 30px;
+            color: white;
+        }
+
+        .sidebar h3 {
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* Content */
+        .content {
+            margin-left: 250px;
+            padding: 25px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px 25px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        /* Statistic Cards */
+        .stat-card {
+            border-radius: 15px;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-purple {
+            background: linear-gradient(135deg, #d9a7c7, #fffcdc) !important;
+            color: #4b0082 !important;
+        }
+        .stat-green {
+            background: linear-gradient(135deg, #d4f4dd, #e0f7f1) !important;
+            color: #0b3d0b !important;
+        }
+        .stat-pink {
+            background: linear-gradient(135deg, #fcd5ce, #f8e1f4) !important;
+            color: #c71585 !important;
+        }
+        .stat-blue {
+            background: linear-gradient(135deg, #d0e6f5, #f0f8ff) !important;
+            color: #1e3d59 !important;
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        /* Cards + Tables */
+        .card-dashboard {
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        footer {
+            background: #343a40;
+            color: #ccc;
+            padding: 15px;
+            text-align: center;
+            border-radius: 12px;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .content { margin-left: 0; padding: 15px; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h3>Admin Panel</h3>
+    <a href="/admin/index" class="active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+    <a href="/admin/user"><i class="bi bi-people-fill me-2"></i> Manage Users</a>
+    <a href="/admin/products"><i class="bi bi-box-seam me-2"></i> Manage Products</a>
+    <a href="/admin/orders"><i class="bi bi-cart-fill me-2"></i> Manage Orders</a>
+    <a href="/admin/categories"><i class="bi bi-tags-fill me-2"></i> Manage Categories</a>
+    <a href="/admin/reviews"><i class="bi bi-star-fill me-2"></i> Manage Reviews</a>
+    <a href="/logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+</div>
+
+<!-- Main Content -->
+<div class="content">
+
+    <div class="topbar">
+        <h4>📊 Tổng quan hệ thống</h4>
+        <span><i class="bi bi-person-circle me-1"></i> Admin</span>
+    </div>
+
+    <!-- Statistic Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-purple d-flex justify-content-between align-items-center">
+                <div>
+                    <h6>Doanh thu</h6>
+                    <h4 th:text="${#numbers.formatDecimal(totalRevenue,0,'COMMA',0,'POINT')} + ' ₫'">150,000 ₫</h4>
+                </div>
+                <i class="bi bi-currency-dollar"></i>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-green d-flex justify-content-between align-items-center">
+                <div>
+                    <h6>Số lượng User</h6>
+                    <h4 th:text="${userCount}">500</h4>
+                </div>
+                <i class="bi bi-people-fill"></i>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-pink d-flex justify-content-between align-items-center">
+                <div>
+                    <h6>Lượt mua</h6>
+                    <h4 th:text="${purchaseCount}">1250</h4>
+                </div>
+                <i class="bi bi-cart-fill"></i>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-blue d-flex justify-content-between align-items-center">
+                <div>
+                    <h6>Đánh giá</h6>
+                    <h4 th:text="${averageRating}">4.5/5</h4>
+                </div>
+                <i class="bi bi-star-fill"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart + Table -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card-dashboard">
+                <h5>📈 Doanh thu theo tháng</h5>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-dashboard">
+                <h5>Thống kê nhanh</h5>
+                <table class="table table-hover text-center">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Chỉ số</th>
+                        <th>Giá trị</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Doanh thu</td>
+                        <td class="text-success fw-bold" th:text="${totalRevenue} + ' ₫'">150,000 ₫</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Đơn hàng</td>
+                        <td th:text="${purchaseCount}">1250</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Người dùng</td>
+                        <td th:text="${userCount}">500</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    © 2025 Admin Dashboard | Designed by You ❤️
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ChartJS Script -->
+<script th:inline="javascript">
+    const months = [[${months}]];
+    const revenues = [[${revenues}]];
+
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Doanh thu (₫)',
+                data: revenues,
+                fill: true,
+                tension: 0.4,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
